@@ -21,29 +21,29 @@ jobs:
           cache: pip
 
       - name: Install dependencies
-        run: pip install -r Labs/Github_Labs/Lab2/requirements.txt
+        run: pip install -r Lab2/requirements.txt
 
       - name: Generate Timestamp
         run: echo "TIMESTAMP=$(date '+%Y%m%d%H%M%S')" >> $GITHUB_ENV
 
       - name: Retrain Model
-        run: python Labs/Github_Labs/Lab2/src/train_model.py --timestamp "$TIMESTAMP"
+        run: python Lab2/src/train_model.py --timestamp "$TIMESTAMP"
 
       - name: Evaluate Model
         run: |
-          python Labs/Github_Labs/Lab2/src/evaluate_model.py --timestamp "$TIMESTAMP"
-          mkdir -p Labs/Github_Labs/Lab2/metrics
-          mv "${TIMESTAMP}_metrics.json" Labs/Github_Labs/Lab2/metrics/
+          python Lab2/src/evaluate_model.py --timestamp "$TIMESTAMP"
+          mkdir -p Lab2/metrics
+          mv "${TIMESTAMP}_metrics.json" Lab2/metrics/
 
       - name: Store Model
         run: |
-          mkdir -p Labs/Github_Labs/Lab2/models
-          mv "model_${TIMESTAMP}_dt_model.joblib" Labs/Github_Labs/Lab2/models/
+          mkdir -p Lab2/models
+          mv "model_${TIMESTAMP}_dt_model.joblib" Lab2/models/
 
       - name: Commit and Push Changes
         run: |
           git config user.name "janmollet"
           git config user.email "jan10mollet@gmail.com"
-          git add Labs/Github_Labs/Lab2/metrics/ Labs/Github_Labs/Lab2/models/
+          git add Lab2/metrics/ Lab2/models/
           git commit -m "Automated model retrain: ${TIMESTAMP}" || echo "No changes to commit"
           git push
