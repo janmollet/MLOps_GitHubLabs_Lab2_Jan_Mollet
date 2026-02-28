@@ -29,7 +29,7 @@ if __name__ == "__main__":
     # ----------------------------
     # Select features and target
     # ----------------------------
-    features = ['age', 'screen_time', 'exercise_hours', 'face_to_face_social_hours_weekly', 'social_isolation_score', 'grades_gpa']  # adjust to your dataset
+    features = ['age', 'face_to_face_social_hours_weekly', 'social_isolation_score', 'grades_gpa']  # adjust to your dataset
     target = 'sleep_hours'
 
     X = df[features]
