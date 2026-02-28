@@ -21,29 +21,29 @@ jobs:
           cache: pip
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install -r Labs/Github_Labs/Lab2/requirements.txt
 
       - name: Generate Timestamp
         run: echo "TIMESTAMP=$(date '+%Y%m%d%H%M%S')" >> $GITHUB_ENV
 
       - name: Retrain Model
-        run: python ./src/train_model.py --timestamp "$TIMESTAMP"
+        run: python Labs/Github_Labs/Lab2/src/train_model.py --timestamp "$TIMESTAMP"
 
       - name: Evaluate Model
         run: |
-          python ./src/evaluate_model.py --timestamp "$TIMESTAMP"
-          mkdir -p metrics
-          mv "${TIMESTAMP}_metrics.json" metrics/
+          python Labs/Github_Labs/Lab2/src/evaluate_model.py --timestamp "$TIMESTAMP"
+          mkdir -p Labs/Github_Labs/Lab2/metrics
+          mv "${TIMESTAMP}_metrics.json" Labs/Github_Labs/Lab2/metrics/
 
       - name: Store Model
         run: |
-          mkdir -p models
-          mv "model_${TIMESTAMP}_dt_model.joblib" models/
+          mkdir -p Labs/Github_Labs/Lab2/models
+          mv "model_${TIMESTAMP}_dt_model.joblib" Labs/Github_Labs/Lab2/models/
 
       - name: Commit and Push Changes
         run: |
           git config user.name "janmollet"
           git config user.email "jan10mollet@gmail.com"
-          git add metrics/ models/
+          git add Labs/Github_Labs/Lab2/metrics/ Labs/Github_Labs/Lab2/models/
           git commit -m "Automated model retrain: ${TIMESTAMP}" || echo "No changes to commit"
           git push
