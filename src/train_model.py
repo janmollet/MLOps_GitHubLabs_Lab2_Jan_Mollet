@@ -12,7 +12,7 @@ import mlflow
 
 if __name__ == "__main__":
     # ----------------------------
-    # Parse timestamp from GitHub Actions
+    # Parse timestamp from GitHub Actions--
     # ----------------------------
     parser = argparse.ArgumentParser()
     parser.add_argument("--timestamp", type=str, required=True, help="Timestamp from GitHub Actions")
@@ -90,3 +90,6 @@ if __name__ == "__main__":
         model_filename = f"models/model_{timestamp}_lr_model.joblib"
         dump(model, model_filename)
         print(f"Model saved as {model_filename}")
+
+
+        #DOES IT WORK?
