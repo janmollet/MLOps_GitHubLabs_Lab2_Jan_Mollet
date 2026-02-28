@@ -22,7 +22,7 @@ jobs:
           cache: pip
 
       - name: Install dependencies
-        run: pip install -r Lab2/requirements.txt
+        run: pip install -r requirements.txt
 
       - name: Generate Timestamp
         run: echo "TIMESTAMP=$(date '+%Y%m%d%H%M%S')" >> $GITHUB_ENV
