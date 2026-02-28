@@ -29,15 +29,7 @@ jobs:
         run: python src/train_model.py --timestamp "$TIMESTAMP"
 
       - name: Evaluate Model and Log Metrics
-        run: |
-          python src/evaluate_model.py --timestamp "$TIMESTAMP"
-          mkdir -p metrics
-          mv "${TIMESTAMP}_metrics.json" metrics/
-
-      - name: Store and Version the New Model
-        run: |
-          mkdir -p models
-          mv "model_${TIMESTAMP}_dt_model.joblib" models/
+        run: python src/evaluate_model.py --timestamp "$TIMESTAMP"
 
       - name: Commit and Push Changes
         run: |
