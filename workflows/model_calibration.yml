@@ -1,0 +1,49 @@
+name: Periodic Model Calibration
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Runs daily at midnight UTC
+
+jobs:
+  retrain:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.9
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate Timestamp
+        run: echo "TIMESTAMP=$(date '+%Y%m%d%H%M%S')" >> $GITHUB_ENV
+
+      - name: Retrain Model
+        run: python ./src/train_model.py --timestamp "$TIMESTAMP"
+
+      - name: Evaluate Model
+        run: |
+          python ./src/evaluate_model.py --timestamp "$TIMESTAMP"
+          mkdir -p metrics
+          mv "${TIMESTAMP}_metrics.json" metrics/
+
+      - name: Store Model
+        run: |
+          mkdir -p models
+          mv "model_${TIMESTAMP}_dt_model.joblib" models/
+
+      - name: Commit and Push Changes
+        run: |
+          git config user.name "janmollet"
+          git config user.email "jan10mollet@gmail.com"
+          git add metrics/ models/
+          git commit -m "Automated model retrain: ${TIMESTAMP}" || echo "No changes to commit"
+          git push

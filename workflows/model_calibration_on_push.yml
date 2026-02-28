@@ -1,0 +1,60 @@
+name: Model Retraining on Push to Main - Github Lab 2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  retrain:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.9
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r Labs/Github_Labs/Lab2/requirements.txt
+
+      - name: Generate Timestamp
+        run: echo "TIMESTAMP=$(date '+%Y%m%d%H%M%S')" >> $GITHUB_ENV
+
+      - name: Retrain Model
+        run: |
+          python Labs/Github_Labs/Lab2/src/train_model.py --timestamp "$TIMESTAMP"
+
+      - name: Evaluate Model and Log Metrics
+        run: |
+          python Labs/Github_Labs/Lab2/src/evaluate_model.py --timestamp "$TIMESTAMP"
+          mkdir -p Labs/Github_Labs/Lab2/metrics
+          mv "${TIMESTAMP}_metrics.json" \
+             "Labs/Github_Labs/Lab2/metrics/${TIMESTAMP}_metrics.json"
+
+      - name: Store and Version the New Model
+        run: |
+          mkdir -p Labs/Github_Labs/Lab2/models
+          mv "model_${TIMESTAMP}_dt_model.joblib" \
+             "Labs/Github_Labs/Lab2/models/model_${TIMESTAMP}_dt_model.joblib"
+
+      - name: Commit and Push Changes
+        run: |
+          git config user.name "janmollet"
+          git config user.email "jan10mollet@gmail.com"
+
+          git add Labs/Github_Labs/Lab2/metrics/ \
+                  Labs/Github_Labs/Lab2/models/
+
+          if ! git diff --cached --quiet; then
+            git commit -m "Automated retrain: ${TIMESTAMP}"
+            git push
+          else
+            echo "No changes to commit."
+          fi
