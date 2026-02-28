@@ -26,6 +26,7 @@ if __name__ == "__main__":
     df = pd.read_csv("gaming_mental_health.csv")
     print(df.head())
 
+
     # ----------------------------
     # Select features and target
     # ----------------------------
@@ -34,6 +35,10 @@ if __name__ == "__main__":
 
     X = df[features]
     y = df[target]
+
+    # Drop rows with any NaN
+    X = X.dropna()
+    y = y.loc[X.index]
 
     # ----------------------------
     # Save raw data for reproducibility
