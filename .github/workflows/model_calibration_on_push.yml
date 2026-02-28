@@ -12,8 +12,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -28,24 +26,24 @@ jobs:
         run: echo "TIMESTAMP=$(date '+%Y%m%d%H%M%S')" >> $GITHUB_ENV
 
       - name: Retrain Model
-        run: python Lab2/src/train_model.py --timestamp "$TIMESTAMP"
+        run: python src/train_model.py --timestamp "$TIMESTAMP"
 
       - name: Evaluate Model and Log Metrics
         run: |
-          python Lab2/src/evaluate_model.py --timestamp "$TIMESTAMP"
-          mkdir -p Lab2/metrics
-          mv "${TIMESTAMP}_metrics.json" Lab2/metrics/
+          python src/evaluate_model.py --timestamp "$TIMESTAMP"
+          mkdir -p metrics
+          mv "${TIMESTAMP}_metrics.json" metrics/
 
       - name: Store and Version the New Model
         run: |
-          mkdir -p Lab2/models
-          mv "model_${TIMESTAMP}_dt_model.joblib" Lab2/models/
+          mkdir -p models
+          mv "model_${TIMESTAMP}_dt_model.joblib" models/
 
       - name: Commit and Push Changes
         run: |
           git config user.name "janmollet"
           git config user.email "jan10mollet@gmail.com"
-          git add Lab2/metrics/ Lab2/models/
+          git add metrics/ models/
           if ! git diff --cached --quiet; then
             git commit -m "Automated retrain: ${TIMESTAMP}"
             git push
