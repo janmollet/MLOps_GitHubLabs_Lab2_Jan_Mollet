@@ -37,5 +37,9 @@ jobs:
           git config user.name "janmollet"
           git config user.email "jan10mollet@gmail.com"
           git add metrics/ models/
-          git commit -m "Automated model retrain: ${TIMESTAMP}" || echo "No changes to commit"
-          git push
+          if ! git diff --cached --quiet; then
+            git commit -m "Automated model retrain: ${TIMESTAMP}"
+            git push
+          else
+            echo "No changes to commit."
+          fi
